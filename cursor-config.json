@@ -1,0 +1,53 @@
+{
+  "name": "Cursor MCP",
+  "version": "1.0.0",
+  "description": "Model Context Protocol for Cursor with console and network logging capabilities",
+  "author": "Your Name",
+  "homepage": "https://github.com/Sirvenis/cursor-mcp",
+  "type": "mcp",
+  "main": "src/cursor-integration.js",
+  "icon": "icons/icon128.png",
+  "settings": {
+    "logLimit": {
+      "type": "number",
+      "default": 50,
+      "description": "Maximum number of logs to store per tab"
+    },
+    "captureConsole": {
+      "type": "boolean",
+      "default": true,
+      "description": "Capture console logs and errors"
+    },
+    "captureNetwork": {
+      "type": "boolean",
+      "default": true,
+      "description": "Capture network requests and responses"
+    },
+    "autoCapture": {
+      "type": "boolean",
+      "default": false,
+      "description": "Automatically capture context when sending to LLM"
+    }
+  },
+  "capabilities": [
+    "getConsoleLogs",
+    "getConsoleErrors",
+    "getNetworkSuccessLogs",
+    "getNetworkErrorLogs",
+    "takeScreenshot",
+    "getSelectedElements",
+    "wipeLogs"
+  ],
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "tabs",
+    "webNavigation",
+    "webRequest"
+  ],
+  "installation": {
+    "type": "browser-extension",
+    "instructions": "See INSTALL.md for detailed installation instructions"
+  }
+}
