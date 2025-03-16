@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursor MCP Test Page</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    h1 {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    
+    .section h2 {
+      margin-top: 0;
+    }
+    
+    button {
+      padding: 8px 12px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    
+    button:hover {
+      background-color: #005999;
+    }
+    
+    .error-button {
+      background-color: #e74c3c;
+    }
+    
+    .error-button:hover {
+      background-color: #c0392b;
+    }
+    
+    .warning-button {
+      background-color: #f39c12;
+    }
+    
+    .warning-button:hover {
+      background-color: #e67e22;
+    }
+    
+    .network-button {
+      background-color: #2ecc71;
+    }
+    
+    .network-button:hover {
+      background-color: #27ae60;
+    }
+    
+    .selection-area {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px dashed #aaa;
+      border-radius: 5px;
+    }
+    
+    .selection-item {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+    }
+    
+    #results {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      min-height: 100px;
+    }
+    
+    .result-item {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #fff;
+      border-radius: 4px;
+      border: 1px solid #eee;
+    }
+    
+    .result-success {
+      border-left: 4px solid #2ecc71;
+    }
+    
+    .result-error {
+      border-left: 4px solid #e74c3c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cursor MCP Test Page</h1>
+  
+  <div class="section">
+    <h2>Console Logging</h2>
+    <p>Use these buttons to generate different types of console logs:</p>
+    
+    <button id="log-info">Log Info</button>
+    <button id="log-debug">Log Debug</button>
+    <button id="log-warning" class="warning-button">Log Warning</button>
+    <button id="log-error" class="error-button">Log Error</button>
+    <button id="log-object">Log Object</button>
+    <button id="log-array">Log Array</button>
+    <button id="throw-error" class="error-button">Throw Error</button>
+    <button id="reject-promise" class="error-button">Reject Promise</button>
+  </div>
+  
+  <div class="section">
+    <h2>Network Requests</h2>
+    <p>Use these buttons to make different types of network requests:</p>
+    
+    <button id="fetch-success" class="network-button">Fetch Success</button>
+    <button id="fetch-error" class="error-button">Fetch Error</button>
+    <button id="xhr-success" class="network-button">XHR Success</button>
+    <button id="xhr-error" class="error-button">XHR Error</button>
+  </div>
+  
+  <div class="section">
+    <h2>DOM Selection</h2>
+    <p>Select elements below to test the element selection functionality:</p>
+    
+    <div class="selection-area">
+      <div class="selection-item" id="item-1">
+        <h3>Item 1</h3>
+        <p>This is the first selectable item. Click on it or select text within it.</p>
+        <button class="select-button">Button in Item 1</button>
+      </div>
+      
+      <div class="selection-item" id="item-2">
+        <h3>Item 2</h3>
+        <p>This is the second selectable item. It has <a href="#">a link</a> and <strong>bold text</strong>.</p>
+        <button class="select-button">Button in Item 2</button>
+      </div>
+      
+      <div class="selection-item" id="item-3">
+        <h3>Item 3</h3>
+        <p>This is the third selectable item. It has an <input type="text" placeholder="Input field"> and a <select>
+          <option>Option 1</option>
+          <option>Option 2</option>
+          <option>Option 3</option>
+        </select>.</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>MCP API Testing</h2>
+    <p>Use these buttons to test the Cursor MCP API directly:</p>
+    
+    <button id="get-console-logs">Get Console Logs</button>
+    <button id="get-console-errors">Get Console Errors</button>
+    <button id="get-network-success">Get Network Success</button>
+    <button id="get-network-errors">Get Network Errors</button>
+    <button id="take-screenshot">Take Screenshot</button>
+    <button id="get-selected-elements">Get Selected Elements</button>
+    <button id="wipe-logs" class="error-button">Wipe Logs</button>
+    <button id="get-all-context">Get All Context</button>
+    
+    <div id="results">
+      <p>Results will appear here...</p>
+    </div>
+  </div>
+  
+  <script>
+    // Console logging functions
+    document.getElementById('log-info').addEventListener('click', () => {
+      console.info('This is an info message from the test page');
+    });
+    
+    document.getElementById('log-debug').addEventListener('click', () => {
+      console.debug('This is a debug message from the test page');
+    });
+    
+    document.getElementById('log-warning').addEventListener('click', () => {
+      console.warn('This is a warning message from the test page');
+    });
+    
+    document.getElementById('log-error').addEventListener('click', () => {
+      console.error('This is an error message from the test page');
+    });
+    
+    document.getElementById('log-object').addEventListener('click', () => {
+      console.log({
+        name: 'Test Object',
+        properties: {
+          number: 42,
+          string: 'Hello, world!',
+          boolean: true,
+          array: [1, 2, 3]
+        },
+        method: function() {
+          return 'This is a method';
+        }
+      });
+    });
+    
+    document.getElementById('log-array').addEventListener('click', () => {
+      console.log([
+        'Item 1',
+        'Item 2',
+        'Item 3',
+        { name: 'Object in array', value: 42 }
+      ]);
+    });
+    
+    document.getElementById('throw-error').addEventListener('click', () => {
+      throw new Error('This is a thrown error from the test page');
+    });
+    
+    document.getElementById('reject-promise').addEventListener('click', () => {
+      new Promise((resolve, reject) => {
+        reject(new Error('This is a rejected promise from the test page'));
+      });
+    });
+    
+    // Network request functions
+    document.getElementById('fetch-success').addEventListener('click', () => {
+      fetch('https://jsonplaceholder.typicode.com/todos/1')
+        .then(response => response.json())
+        .then(data => {
+          console.log('Fetch success:', data);
+        });
+    });
+    
+    document.getElementById('fetch-error').addEventListener('click', () => {
+      fetch('https://jsonplaceholder.typicode.com/nonexistent')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+        });
+    });
+    
+    document.getElementById('xhr-success').addEventListener('click', () => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://jsonplaceholder.typicode.com/todos/1');
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          console.log('XHR success:', JSON.parse(xhr.responseText));
+        }
+      };
+      xhr.send();
+    });
+    
+    document.getElementById('xhr-error').addEventListener('click', () => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', 'https://jsonplaceholder.typicode.com/nonexistent');
+      xhr.onerror = function() {
+        console.error('XHR error!');
+      };
+      xhr.onload = function() {
+        if (xhr.status !== 200) {
+          console.error('XHR HTTP error! Status:', xhr.status);
+        }
+      };
+      xhr.send();
+    });
+    
+    // MCP API testing functions
+    document.getElementById('get-console-logs').addEventListener('click', async () => {
+      if (window.CursorMCP && window.CursorMCP.getConsoleLogs) {
+        try {
+          const logs = await window.CursorMCP.getConsoleLogs();
+          displayResult('Console Logs', logs, true);
+        } catch (error) {
+          displayResult('Console Logs', error.message, false);
+        }
+      } else {
+        displayResult('Console Logs', 'CursorMCP API not available', false);
+      }
+    });
+    
+    document.getElementById('get-console-errors').addEventListener('click', async () => {
+      if (window.CursorMCP && window.CursorMCP.getConsoleErrors) {
+        try {
+          const errors = await window.CursorMCP.getConsoleErrors();
+          displayResult('Console Errors', errors, true);
+        } catch (error) {
+          displayResult('Console Errors', error.message, false);
+        }
+      } else {
+        displayResult('Console Errors', 'CursorMCP API not available', false);
+      }
+    });
+    
+    document.getElementById('get-network-success').addEventListener('click', async () => {
+      if (window.CursorMCP && window.CursorMCP.getNetworkSuccessLogs) {
+        try {
+          const logs = await window.CursorMCP.getNetworkSuccessLogs();
+          displayResult('Network Success Logs', logs, true);
+        } catch (error) {
+          displayResult('Network Success Logs', error.message, false);
+        }
+      } else {
+        displayResult('Network Success Logs', 'CursorMCP API not available', false);
+      }
+    });
+    
+    document.getElementById('get-network-errors').addEventListener('click', async () => {
+      if (window.CursorMCP && window.CursorMCP.getNetworkErrorLogs) {
+        try {
+          const logs = await window.CursorMCP.getNetworkErrorLogs();
+          displayResult('Network Error Logs', logs, true);
+        } catch (error) {
+          displayResult('Network Error Logs', error.message, false);
+        }
+      } else {
+        displayResult('Network Error Logs', 'CursorMCP API not available', false);
+      }
+    });
+    
+    document.getElementById('take-screenshot').addEventListener('click', async () => {
+      if (window.CursorMCP && window.CursorMCP.takeScreenshot) {
+        try {
+          const screenshot = await window.CursorMCP.takeScreenshot();
+          if (screenshot) {
+            displayResult('Screenshot', 'Screenshot taken successfully', true);
+            
+            // Display the screenshot
+            const img = document.createElement('img');
+            img.src = screenshot;
+            img.style.maxWidth = '100%';
+            img.style.marginTop = '10px';
+            
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.appendChild(img);
+          } else {
+            displayResult('Screenshot', 'Failed to take screenshot', false);
+          }
+        } catch (error) {
+          displayResult('Screenshot', error.message, false);
+        }
+      } else {
+        displayResult('Screenshot', 'CursorMCP API not available', false);
+      }
+    });
+    
+    document.getElementById('get-selected-elements').addEventListener('click', async () => {
+      if (window.CursorMCP && window.CursorMCP.getSelectedElements) {
+        try {
+          const elements = await window.CursorMCP.getSelectedElements();
+          displayResult('Selected Elements', elements, true);
+        } catch (error) {
+          displayResult('Selected Elements', error.message, false);
+        }
+      } else {
+        displayResult('Selected Elements', 'CursorMCP API not available', false);
+      }
+    });
+    
+    document.getElementById('wipe-logs').addEventListener('click', async () => {
+      if (window.CursorMCP && window.CursorMCP.wipeLogs) {
+        try {
+          const success = await window.CursorMCP.wipeLogs();
+          displayResult('Wipe Logs', success ? 'Logs wiped successfully' : 'Failed to wipe logs', success);
+        } catch (error) {
+          displayResult('Wipe Logs', error.message, false);
+        }
+      } else {
+        displayResult('Wipe Logs', 'CursorMCP API not available', false);
+      }
+    });
+    
+    document.getElementById('get-all-context').addEventListener('click', async () => {
+      if (window.CursorMCP) {
+        try {
+          // Manually gather all context
+          const [consoleLogs, consoleErrors, networkSuccess, networkErrors, selectedElements] = await Promise.all([
+            window.CursorMCP.getConsoleLogs ? window.CursorMCP.getConsoleLogs() : [],
+            window.CursorMCP.getConsoleErrors ? window.CursorMCP.getConsoleErrors() : [],
+            window.CursorMCP.getNetworkSuccessLogs ? window.CursorMCP.getNetworkSuccessLogs() : [],
+            window.CursorMCP.getNetworkErrorLogs ? window.CursorMCP.getNetworkErrorLogs() : [],
+            window.CursorMCP.getSelectedElements ? window.CursorMCP.getSelectedElements() : []
+          ]);
+          
+          const context = {
+            timestamp: new Date().toISOString(),
+            consoleLogs,
+            consoleErrors,
+            networkSuccess,
+            networkErrors,
+            selectedElements
+          };
+          
+          displayResult('All Context', context, true);
+        } catch (error) {
+          displayResult('All Context', error.message, false);
+        }
+      } else {
+        displayResult('All Context', 'CursorMCP API not available', false);
+      }
+    });
+    
+    // Helper function to display results
+    function displayResult(title, data, success) {
+      const resultsDiv = document.getElementById('results');
+      
+      // Clear previous results
+      resultsDiv.innerHTML = '';
+      
+      // Create result item
+      const resultItem = document.createElement('div');
+      resultItem.className = `result-item result-${success ? 'success' : 'error'}`;
+      
+      // Create title
+      const titleElement = document.createElement('h3');
+      titleElement.textContent = title;
+      resultItem.appendChild(titleElement);
+      
+      // Create content
+      const content = document.createElement('pre');
+      content.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+      resultItem.appendChild(content);
+      
+      // Add to results
+      resultsDiv.appendChild(resultItem);
+    }
+  </script>
+</body>
+</html>
