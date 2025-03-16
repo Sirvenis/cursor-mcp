@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursor MCP</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      margin: 0;
+      padding: 0;
+      width: 400px;
+      height: 500px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    header {
+      background-color: #2c2c2c;
+      color: white;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+    }
+    
+    .logo h1 {
+      font-size: 16px;
+      margin: 0;
+    }
+    
+    .tabs {
+      display: flex;
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .tab {
+      padding: 10px 15px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      flex: 1;
+      text-align: center;
+      font-size: 14px;
+    }
+    
+    .tab.active {
+      border-bottom-color: #007acc;
+      background-color: #fff;
+    }
+    
+    .tab-content {
+      flex: 1;
+      overflow: auto;
+      padding: 15px;
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .log-entry {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      border-left: 4px solid #ddd;
+      background-color: #f9f9f9;
+      font-size: 13px;
+    }
+    
+    .log-entry.info {
+      border-left-color: #007acc;
+    }
+    
+    .log-entry.error {
+      border-left-color: #e74c3c;
+      background-color: #fef0f0;
+    }
+    
+    .log-entry.warn {
+      border-left-color: #f39c12;
+      background-color: #fef9e7;
+    }
+    
+    .log-entry .timestamp {
+      color: #777;
+      font-size: 11px;
+      margin-bottom: 5px;
+    }
+    
+    .log-entry .message {
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+    
+    .network-entry {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 4px;
+      border-left: 4px solid #ddd;
+      background-color: #f9f9f9;
+      font-size: 13px;
+    }
+    
+    .network-entry.success {
+      border-left-color: #2ecc71;
+    }
+    
+    .network-entry.error {
+      border-left-color: #e74c3c;
+      background-color: #fef0f0;
+    }
+    
+    .network-entry .url {
+      font-weight: bold;
+      margin-bottom: 5px;
+      word-break: break-all;
+    }
+    
+    .network-entry .method {
+      display: inline-block;
+      padding: 2px 5px;
+      border-radius: 3px;
+      background-color: #ddd;
+      margin-right: 5px;
+    }
+    
+    .network-entry .method.get {
+      background-color: #3498db;
+      color: white;
+    }
+    
+    .network-entry .method.post {
+      background-color: #2ecc71;
+      color: white;
+    }
+    
+    .network-entry .method.put {
+      background-color: #f39c12;
+      color: white;
+    }
+    
+    .network-entry .method.delete {
+      background-color: #e74c3c;
+      color: white;
+    }
+    
+    .network-entry .status {
+      display: inline-block;
+      padding: 2px 5px;
+      border-radius: 3px;
+      margin-right: 5px;
+    }
+    
+    .network-entry .status.success {
+      background-color: #2ecc71;
+      color: white;
+    }
+    
+    .network-entry .status.error {
+      background-color: #e74c3c;
+      color: white;
+    }
+    
+    .network-entry .timestamp {
+      color: #777;
+      font-size: 11px;
+    }
+    
+    .tools-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .tool-card {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .tool-card:hover {
+      background-color: #f5f5f5;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .tool-card h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    
+    .tool-card p {
+      margin: 0;
+      color: #666;
+      font-size: 13px;
+    }
+    
+    .settings-container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+    
+    .setting-item label {
+      font-weight: 500;
+    }
+    
+    .setting-item p {
+      margin: 5px 0 0;
+      color: #666;
+      font-size: 12px;
+    }
+    
+    .setting-item input[type="number"] {
+      width: 60px;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+    }
+    
+    .setting-item input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+    
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007acc;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    
+    button:hover {
+      background-color: #005999;
+    }
+    
+    button.secondary {
+      background-color: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+    
+    button.secondary:hover {
+      background-color: #e5e5e5;
+    }
+    
+    button.danger {
+      background-color: #e74c3c;
+    }
+    
+    button.danger:hover {
+      background-color: #c0392b;
+    }
+    
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #777;
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .empty-state p {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <img src="../icons/icon48.png" alt="Cursor MCP Logo">
+      <h1>Cursor MCP</h1>
+    </div>
+    <div>
+      <span id="version">v1.0.0</span>
+    </div>
+  </header>
+  
+  <div class="tabs">
+    <div class="tab active" data-tab="console">Console</div>
+    <div class="tab" data-tab="network">Network</div>
+    <div class="tab" data-tab="tools">Tools</div>
+    <div class="tab" data-tab="settings">Settings</div>
+  </div>
+  
+  <div id="console" class="tab-content active">
+    <div class="actions">
+      <div>
+        <button id="refresh-console">Refresh</button>
+        <button id="clear-console" class="secondary">Clear</button>
+      </div>
+      <div>
+        <button id="copy-console">Copy All</button>
+      </div>
+    </div>
+    
+    <div id="console-logs"></div>
+    
+    <div id="console-empty" class="empty-state">
+      <p>No console logs captured yet.</p>
+      <button id="refresh-console-empty">Refresh</button>
+    </div>
+  </div>
+  
+  <div id="network" class="tab-content">
+    <div class="actions">
+      <div>
+        <button id="refresh-network">Refresh</button>
+        <button id="clear-network" class="secondary">Clear</button>
+      </div>
+      <div>
+        <button id="copy-network">Copy All</button>
+      </div>
+    </div>
+    
+    <div id="network-logs"></div>
+    
+    <div id="network-empty" class="empty-state">
+      <p>No network requests captured yet.</p>
+      <button id="refresh-network-empty">Refresh</button>
+    </div>
+  </div>
+  
+  <div id="tools" class="tab-content">
+    <div class="tools-container">
+      <div class="tool-card" id="take-screenshot">
+        <h3>Take Screenshot</h3>
+        <p>Capture a screenshot of the current tab</p>
+      </div>
+      
+      <div class="tool-card" id="get-selected-elements">
+        <h3>Get Selected Elements</h3>
+        <p>Get information about elements selected on the page</p>
+      </div>
+      
+      <div class="tool-card" id="get-all-context">
+        <h3>Get All Context</h3>
+        <p>Get all context data for sending to LLMs</p>
+      </div>
+      
+      <div class="tool-card" id="wipe-logs">
+        <h3>Wipe All Logs</h3>
+        <p>Clear all stored logs</p>
+      </div>
+    </div>
+  </div>
+  
+  <div id="settings" class="tab-content">
+    <div class="settings-container">
+      <div class="setting-item">
+        <div>
+          <label for="log-limit">Log Limit</label>
+          <p>Maximum number of logs to store per tab</p>
+        </div>
+        <input type="number" id="log-limit" min="10" max="1000" value="50">
+      </div>
+      
+      <div class="setting-item">
+        <div>
+          <label for="capture-console">Capture Console</label>
+          <p>Capture console logs and errors</p>
+        </div>
+        <input type="checkbox" id="capture-console" checked>
+      </div>
+      
+      <div class="setting-item">
+        <div>
+          <label for="capture-network">Capture Network</label>
+          <p>Capture network requests and responses</p>
+        </div>
+        <input type="checkbox" id="capture-network" checked>
+      </div>
+      
+      <div class="setting-item">
+        <div>
+          <label for="auto-capture">Auto Capture</label>
+          <p>Automatically capture context when sending to LLM</p>
+        </div>
+        <input type="checkbox" id="auto-capture">
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button id="save-settings">Save Settings</button>
+      <button id="reset-settings" class="secondary">Reset to Defaults</button>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
